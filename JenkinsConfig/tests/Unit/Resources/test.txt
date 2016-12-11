@@ -1,0 +1,93 @@
+$a = (iwr 'http://docs.oracle.com/javase/7/docs/technotes/tools/windows/java.html')
+$a.ParsedHtml.getElementsByTagName('dt') | ? innerText -Match '^-' | Select -ExpandProperty innerText
+
+(?<java>java?|javaw?)\s+(?<options>[^-Jar])(?<JarOrClass>class|-jar|-jar)(?<arguments>.*)
+
+
+-client -server -agentlib:libname=options -agentpath:pathname=options -Dproperty=value -ea:package classname
+
+
+java [ options ] class [ arguments ]
+java [ options ] -jar file.jar [ arguments ]
+javaw [ options ] class [ arguments ]
+javaw [ options ] -jar file.jar [ arguments ]
+
+options
+Command-line options. See Options.
+
+class
+The name of the class to be called.
+
+file.jar
+The name of the JAR file to be called. Used only with the -jar command.
+
+arguments
+The arguments passed to the main function.
+
+-client 
+-server 
+-agentlib:libname[=options] 
+-agentpath:pathname[=options] 
+-classpath classpath 
+-cp classpath 
+-Dproperty=value 
+-disableassertions[:package name"..." | :class name ] 
+-da[:package name"..." | :class name ] 
+-enableassertions[:package name"..." | :class name ] 
+-ea[:package name"..." | :class name ] 
+-enablesystemassertions 
+-esa 
+-disablesystemassertions 
+-dsa 
+-help or -? 
+-jar 
+-javaagent:jarpath[=options] 
+-jre-restrict-search 
+-no-jre-restrict-search 
+-showversion 
+-splash:imagepath 
+-verbose 
+-verbose:class 
+-verbose:gc 
+-verbose:jni 
+-version 
+-version:release 
+-X 
+-Xint 
+-Xbatch 
+-Xbootclasspath:bootclasspath 
+-Xbootclasspath/a:path 
+-Xbootclasspath/p:path 
+-Xcheck:jni 
+-Xfuture 
+-Xnoclassgc 
+-Xincgc 
+-Xloggc:file 
+-Xmnsize or -XX:NewSize 
+-Xmsn 
+-Xmxn 
+-Xprof 
+-Xrs 
+-Xssn 
+-Xverify:mode 
+-XX:AllocationPrefetchStyle=n 
+-XX:+AggressiveOpts 
+-XX:+|-DisableAttachMechanism 
+-XX:+|-FlightRecorder 
+-XX:FlightRecorderOptions=parameter=value 
+-XX:LargePageSizeInBytes=n 
+-XX:MaxGCPauseMillis=n 
+-XX:NewSize 
+-XX:ParallelGCThreads=n 
+-XX:PredictedClassLoadCount=n 
+-XX:+PrintCompilation 
+-XX:+PrintGCDetails
+-XX:+PrintGCTimeStamps 
+-XX:SoftRefLRUPolicyMSPerMB=0 
+-XX:StartFlightRecording=parameter=value 
+-XX:TLABSize=n 
+-XX:+UnlockCommercialFeatures 
+-XX:+|-UseCompressedOops 
+-XX:+UseConcMarkSweepGC or -XX:+UseG1GC 
+-XX:+|-UseLargePages 
+-XX:+UseParallelOldGC 

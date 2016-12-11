@@ -1,0 +1,39 @@
+[
+    {
+        "name":"ClassPath"
+        ,"selector":"^-(cp|classpath|ClassPath|CLASSPATH)$"
+        ,"parser":"^-(<property>cp|classpath|classPath|ClassPath|CLASSPATH)$"
+        ,"next_token_as": "classpath"
+        ,"properties": ["property"]
+        ,"formater":"-{0} {1}"
+        ,"description":""
+        ,"typeName": "Java.Option.ClassPath"
+   },
+   {
+        "name":"SingleKey"
+        ,"selector":"^-[\\w]+$" 
+        ,"parser":"^(?<dashes>[-]{1,2})(?<key>[\\w]+)$"
+        ,"properties":["dashes","key"]
+        ,"formater":"{0}{1}"
+        ,"description":""
+        ,"TypeName": "Java.Option.SingleKey"
+   },
+   {
+        "Name": "DPropertyValue"
+        ,"selector": "^-D.+=.*$"
+        ,"Parser": "^(-{1,2})(D)([^=]+)=(.*)$"
+        ,"properties": ["dashes","D","property","value"]
+        ,"Formater":"{0}{1}{2}={3}"
+        ,"description":"Standard Key Value with separator : or ="
+        ,"TypeName": "Java.Option.DPropertyValue"
+   },
+   {
+        "Name": "KeyValue"
+        ,"selector": "^-[^X][\\w]+:.*[=]*.*$"
+        ,"Parser": "^(-{1,2})([^:]+)(:?)([^=]*)=?(.*)$"
+        ,"properties": ["dashes","property","separator","key","value"]
+        ,"Formater":"{0}{1}{2}{3}"
+        ,"description":"Standard Key Value with separator : or ="
+        ,"TypeName": "Java.Option.KeyValue"
+   } 
+]
