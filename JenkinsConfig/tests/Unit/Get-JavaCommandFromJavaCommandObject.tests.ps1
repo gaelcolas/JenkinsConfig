@@ -22,7 +22,7 @@ Describe 'Get-JavaCommandFromJavaCommandObject' {
     }
 
     It 'Returns the expected result' {
-        $ExampleObject | Get-JavaCommandFromJavaCommandObject | Should beExactly '-XOption1 -Doption2=value2 Class argument1 argument2'
+        $ExampleObject | Get-JavaCommandFromJavaCommandObject | Should beExactly ' -XOption1 -Doption2=value2 Class argument1 argument2'
     }
   }
 
@@ -37,7 +37,7 @@ Describe 'Get-JavaCommandFromJavaCommandObject' {
                                 ClassOrJar = 'Class'
                                 Arguments  = 'argument1','argument2'
                             }
-           expectedResult = '-XOption1 -Doption2=value2 Class argument1 argument2'
+           expectedResult = ' -XOption1 -Doption2=value2 Class argument1 argument2'
         }
         <#,@{testInput       = [PSCustomObject]@{
                                 PSTypeName = 'Java.CommandObject'

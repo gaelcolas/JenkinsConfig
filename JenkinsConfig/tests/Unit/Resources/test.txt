@@ -88,6 +88,7 @@ The arguments passed to the main function.
 -XX:TLABSize=n 
 -XX:+UnlockCommercialFeatures 
 -XX:+|-UseCompressedOops 
--XX:+UseConcMarkSweepGC or -XX:+UseG1GC 
+-XX:+UseConcMarkSweepGC or 
+-XX:+UseG1GC 
 -XX:+|-UseLargePages 
 -XX:+UseParallelOldGC 

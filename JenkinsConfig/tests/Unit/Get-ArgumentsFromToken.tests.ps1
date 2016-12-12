@@ -2,16 +2,16 @@
 $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.'
 . "$here/../../*/$sut" #for files in Public\Private folders, called from the tests folder
 
-Describe 'Get-ArgumentsFromToken' {
+Describe 'Get-ArgumentsFromTokens' {
 
   Context 'General context'   {
 
     It 'runs without errors' {
-        { Get-ArgumentsFromToken -ArgumentsTokens '-Option' } | Should Not Throw
+        { Get-ArgumentsFromTokens -ArgumentsTokens '-Option' } | Should Not Throw
     }
 
     It 'throws when JavaOptionToken is null' {
-      { Get-ArgumentsFromToken -ArgumentsTokens $null } | Should Throw
+      { Get-ArgumentsFromTokens -ArgumentsTokens $null } | Should Throw
     }
 
   }
@@ -30,7 +30,7 @@ Describe 'Get-ArgumentsFromToken' {
     foreach ($test in $listOfTests) {
         It "parses $($test.testInput) to $($test.result)" -Pending:(.{try{[bool]::Parse($test.pending)}catch{$false}}) {
             $propertiesToTest = $test.result | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name
-            $Result = Get-ArgumentsFromToken -ArgumentsTokens $test.TestInput
+            $Result = Get-ArgumentsFromTokens -ArgumentsTokens $test.TestInput
             Compare-Object -ReferenceObject $test.result -DifferenceObject $result -Property $propertiesToTest | Should BeNullOrEmpty
             $Result.PSTypeNames | Should be $test.result.PSTypeNames
         }
