@@ -16,17 +16,19 @@ Describe 'Get-ArgumentsFromTokens' {
 
   }
 
+  #TODO: Add test for -Xmx256m,-Xms256m
+  #TODO: Add test for -Xrunjdwp:transport=dt_socket,server=y,address=8000
   Context 'Run list of tests to validate parsing' {
     $listOfTests = @(
-            @{TestInput = '-client'; result = [PSCustomObject]@{PSTypeName='Java.Option.SingleKey';key='client';dashes='-'}}
-            ,@{TestInput = '-server'; result = [PSCustomObject]@{PSTypeName='Java.Option.SingleKey';key='server';dashes='-'}}
-            ,@{TestInput = '-agentpath:pathname'; result = [PSCustomObject]@{PSTypeName='Java.Option.KeyValue';property='agentpath';key='pathname';value='';separator=':';dashes='-'}}
-            ,@{TestInput = '-agentpath:pathname=options1'; result = [PSCustomObject]@{PSTypeName='Java.Option.KeyValue';property='agentpath';key='pathname';value='options1';separator=':';dashes='-'}}
+            @{TestInput = '-client'; result = [PSCustomObject]@{PSTypeName='Java.Option.SingleKey';property='client';}}
+            ,@{TestInput = '-server'; result = [PSCustomObject]@{PSTypeName='Java.Option.SingleKey';property='server';}}
+            ,@{TestInput = '-agentpath:pathname'; result = [PSCustomObject]@{PSTypeName='Java.Option.KeyValue';property='agentpath';key='pathname';value='';separator=':';}}
+            ,@{TestInput = '-agentpath:pathname=options1'; result = [PSCustomObject]@{PSTypeName='Java.Option.KeyValue';property='agentpath';key='pathname';equal='=';value='options1';separator=':'}}
             ,@{TestInput = '-classpath','path\class.jar'; result = [PSCustomObject]@{PSTypeName='Java.Option.ClassPath';property='classpath';classpath='path\class.jar';}}
-            ,@{TestInput = '-Dproperty=value'; result = [PSCustomObject]@{PSTypeName='Java.Option.DPropertyValue';property='property';dashes='-';'D'='D';value='value'};}
-            ,@{TestInput = '-da:com.wombat.fruitbat...'; result = [PSCustomObject]@{PSTypeName='Java.Option.KeyValue';property='da';key='com.wombat.fruitbat...';separator=':';dashes='-'}}
+            ,@{TestInput = '-Dproperty=value'; result = [PSCustomObject]@{PSTypeName='Java.Option.DPropertyValue';property='property';value='value'};}
+            ,@{TestInput = '-da:com.wombat.fruitbat...'; result = [PSCustomObject]@{PSTypeName='Java.Option.KeyValue';property='da';key='com.wombat.fruitbat...';separator=':'}}
     )
-    
+
     foreach ($test in $listOfTests) {
         It "parses $($test.testInput) to $($test.result)" -Pending:(.{try{[bool]::Parse($test.pending)}catch{$false}}) {
             $propertiesToTest = $test.result | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name

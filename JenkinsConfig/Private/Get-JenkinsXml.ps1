@@ -32,13 +32,17 @@
     Process {
         foreach ($JenkinsConfig in $JenkinsXMLPath) {
             Write-Verbose -Message ('Verifying if file {0} exists or relative to {1}' -f $JenkinsConfig.FullName, $pwd.Path)
+            $AlternativeJenkinsConfig = $null
             if (!$JenkinsConfig.Exists -and 
-                !($JenkinsConfig = [string](Resolve-Path -Path (Join-Path -Path $pwd.Path -ChildPath $JenkinsConfig) -ErrorAction SilentlyContinue))
+                !($AlternativeJenkinsConfig = [string](Resolve-Path -Path (Join-Path -Path $pwd.Path -ChildPath $JenkinsConfig) -ErrorAction SilentlyContinue))
                 )
             {
                 Throw ('The file specified {0} does not exist' -f $JenkinsConfig)
             }
             else {
+                if($AlternativeJenkinsConfig) {
+                    $JenkinsConfig = $AlternativeJenkinsConfig
+                }
                 Write-Verbose -Message ('File {0} exists. Loading XML in Memory' -f $JenkinsConfig) 
             }
 

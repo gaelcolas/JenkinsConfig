@@ -1,8 +1,8 @@
 [
     {
         "name":"KeyValue"
-        ,"selector":"^--[^:]+:?.*$"
-        ,"parser":"^--([^:]+):?(.*)$"
+        ,"selector":"^--[^=]+=?.*$"
+        ,"parser":"^--([^=]+)=?(.*)$"
         ,"properties": ["key","value"]
         ,"formater":"--{0}:{1}"
         ,"description":""

@@ -10,29 +10,56 @@
         ,"typeName": "Java.Option.ClassPath"
    },
    {
+        "name":"Xrs"
+        ,"selector":"^-Xrs$"
+        ,"parser":"^-X(rs)$"
+        ,"properties": ["property"]
+        ,"formater":"-X{0}"
+        ,"description":"Running as a service. Prevents the JVM from watching for or processing CTRL_LOGOFF_EVENT or SIGHUP events"
+        ,"typeName": "Java.Option.rs"
+   },
+   {
+        "name":"Xmx"
+        ,"selector":"^-Xmx:?\\d+[g|G|m|M|k|K]$"
+        ,"parser":"^-X(mx):?(\\d+)([g|G|m|M|k|K])$"
+        ,"properties": ["property","size","qualifier"]
+        ,"formater":"-Xmx{1}{2}"
+        ,"description":"Maximimum Heap Size"
+        ,"typeName": "Java.Option.mx"
+   },
+   {
+        "name":"Xms"
+        ,"selector":"^-Xms\\d+[g|G|m|M|k|K]+$"
+        ,"parser":"^-X(ms)(\\d+)([g|G|m|M|k|K])$"
+        ,"properties": ["property","size","qualifier"]
+        ,"formater":"-X{0}{1}{2}"
+        ,"description":"Initial and minimum Heap Size"
+        ,"typeName": "Java.Option.ms"
+   },
+   {
         "name":"SingleKey"
         ,"selector":"^-[\\w]+$" 
-        ,"parser":"^(?<dashes>[-]{1,2})(?<key>[\\w]+)$"
-        ,"properties":["dashes","key"]
-        ,"formater":"{0}{1}"
+        ,"parser":"^-(?<property>[^:]+)$"
+        ,"properties":["property"]
+        ,"formater":"-{0}"
         ,"description":""
         ,"TypeName": "Java.Option.SingleKey"
    },
    {
         "Name": "DPropertyValue"
         ,"selector": "^-D.+=.*$"
-        ,"Parser": "^(-{1,2})(D)([^=]+)=(.*)$"
-        ,"properties": ["dashes","D","property","value"]
-        ,"Formater":"{0}{1}{2}={3}"
-        ,"description":"Standard Key Value with separator : or ="
+        ,"Parser": "^-D([^=]+)=(.*)$"
+        ,"properties": ["property","value"]
+        ,"Formater":"-D{0}={1}"
+        ,"description":"Standard -Dproperty=value KeyValue pair with separator ="
         ,"TypeName": "Java.Option.DPropertyValue"
    },
    {
         "Name": "KeyValue"
         ,"selector": "^-[^X][\\w]+:.*[=]*.*$"
-        ,"Parser": "^(-{1,2})([^:]+)(:?)([^=]*)=?(.*)$"
-        ,"properties": ["dashes","property","separator","key","value"]
-        ,"Formater":"{0}{1}{2}{3}"
+        ,"Parser": "^(-{1,2})([^:]+)(:?)([^=]*)(=?)(.*)$"
+        ,"properties": ["dashes","property","separator","key","equal","value"]
+        ,"Formater":"-{0}{1}{2}{3}{4}{5}"
         ,"description":"Standard Key Value with separator : or ="
         ,"TypeName": "Java.Option.KeyValue"
    } 

@@ -1,9 +1,17 @@
 ﻿function Set-JenkinsSvcConfig {
     [CmdletBinding()]
     Param (
+        [Parameter(
+            Mandatory,
+            ValueFromPipelineByPropertyName
+            )]
         [PSTypeName('Jenkins.configuration')]
         $ConfigurationObject,
-
+         
+        [Parameter(
+            Mandatory,
+            ValueFromPipelineByPropertyName
+            )]
         [ValidateNotNullOrEmpty()]
         [io.FileInfo]
         $FilePath

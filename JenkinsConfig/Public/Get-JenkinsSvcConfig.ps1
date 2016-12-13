@@ -1,16 +1,20 @@
-
-function Get-JenkinsConfigObject {
+﻿function Get-JenkinsSvcConfig {
     <#
       .SYNOPSIS
       Describe the function here
+
       .DESCRIPTION
       Describe the function in more detail
+
       .EXAMPLE
       Give an example of how to use it
+
       .EXAMPLE
       Give another example of how to use it
+
       .PARAMETER Param1
       The param1
+
       .PARAMETER param2
       The second param
       #>
@@ -27,11 +31,12 @@ function Get-JenkinsConfigObject {
 
     process {
         foreach ($JenkinsConfig in $JenkinsXMLPath) {
-            $Arguments = Get-JenkinsJavaArguments -JenkinsXMLPath .\Jenkins\tests\jenkins.xml
             $JenkinsXml = Get-JenkinsXml -JenkinsXMLPath $JenkinsConfig -ErrorAction Continue
+            $Arguments = Get-JenkinsJavaArguments -JenkinsXMLPath $JenkinsXMLPath
 
-            #Constructing a PSObject out of the Parsed Info (allows easier edit and JSON comparison).
-            Write-Output ([PSCustomObject]@{
+            #Constructing a PSObject out of the Parsed Info (allows easier manipulation).
+            #TODO: support a list of Env variable
+            Write-Output -InputObject ([PSCustomObject]@{
                 PSTypeName = 'Jenkins.configuration'
                 'Service' = [PSCustomObject]@{
                     PSTypeName    = 'Jenkins.xml.Service'
@@ -52,5 +57,4 @@ function Get-JenkinsConfigObject {
             })
         }
     }
-
 }
