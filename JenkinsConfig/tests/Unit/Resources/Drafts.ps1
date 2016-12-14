@@ -36,7 +36,7 @@ $JenkinsSvcJarArguments =  @{
 $JenkinsSvcJavaOption = @{
     Ensure = 'Absent'
     Identifier = ''
-    Tokens = @('-Xmx256m','')
+    Tokens = @('-Xmx256m')
     ResolutionMode = 'Delete','Error','SetDefaultValue'
     ArgumentParserDefinitionFile = 'C:\test.json'
 }

@@ -1,20 +1,20 @@
 ﻿function Get-JenkinsJavaArguments {
     <#
       .SYNOPSIS
-      Looks up the Jenkins Arguments in the XML at service.arguments and
-      split them into an object
+      Returns a Jenkins.config.JavaArguments object of the Jenkins.xml
+      service.arguments node.
 
       .DESCRIPTION
-      Describe the function in more detail
+      Looks up the Jenkins Arguments string in the Jenkins.xml,
+      in the service.arguments Node an extract the different Java 
+      Options,jar/class, and arguments as Tokens (array of strings).
       
       .EXAMPLE
-      Give an example of how to use it
+      $object = Get-JenkinsJavaArguments -JenkinsXMLPath C:\Jenkins\Jenkins.xml
+      $object | convertto-Json
       
-      .EXAMPLE
-      Give another example of how to use it
-      
-      .PARAMETER Param1
-      The param1
+      .PARAMETER JenkinsXMLPath
+      File path to the Jenkins XML configuration file. Default to C:\Program Files (x86)\Jenkins\Jenkins.xml
       #>
     [cmdletBinding()]
     [OutputType('Jenkins.config.JavaArguments')]

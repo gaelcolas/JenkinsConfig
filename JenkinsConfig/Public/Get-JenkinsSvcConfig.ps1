@@ -1,22 +1,27 @@
 ﻿function Get-JenkinsSvcConfig {
     <#
       .SYNOPSIS
-      Describe the function here
+      Reads a Jenkins.xml file and transforms to an object for manipulation.
 
       .DESCRIPTION
-      Describe the function in more detail
+      This command Loads the specified Jenkins.xml that configures the windows service,
+      into xml document object and extract some information as a Custom object of 
+      PSTypeName [Jenkins.configuration].
+      This object as the service, id, name, description, env, executable, arguments, logmode, onfailure properties.
+      The Arguments property is a [PSCustomObject] of PSTypeName = [Java.CommandObject], defined
+      in the command Get-JavaCommandObjectFromTokenizedCommand.
 
       .EXAMPLE
-      Give an example of how to use it
+      Get-JenkinsSvcConfig -JenkinsXMLPath 'C:\Program Files (x86)\Jenkins\Jenkins.xml'
 
       .EXAMPLE
-      Give another example of how to use it
+      $JenkinsSvcConfig = Get-JenkinsSvcConfig -JenkinsXMLPath 'C:\Program Files (x86)\Jenkins\Jenkins.xml'
+      $JenkinsSvcConfig.service.Arguments = '--httpPort:8080','--webroot="%BASE%\war"'
+      Set-JenkinsSvcConfig -ConfigurationObject $JenkinsSvcConfig -JenkinsXMLPath C:\Jenkins.xml
 
-      .PARAMETER Param1
-      The param1
+      .PARAMETER JenkinsXMLPath
+      Path to the Jenkins.xml configuration. By default it uses 'C:\Program Files (x86)\Jenkins\Jenkins.xml'
 
-      .PARAMETER param2
-      The second param
       #>
     [cmdletBinding()]
     [OutputType('PSCustomObject')]

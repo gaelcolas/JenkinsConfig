@@ -25,7 +25,16 @@
             )]
         [PSTypeName('Jenkins.config.JavaArguments')]
         [PSCustomObject]
+
         $JenkinsJavaArguments,
+
+        [Parameter(
+            Mandatory,
+            ValueFromPipelineByPropertyName
+            )]
+        [ValidateSet('UpdateOnly','UpdateAndAdd','ExactAndFinal','Remove','ErrorIfPresent')]
+        [string]
+        $ResolutionMode,
 
         [Parameter(
             ValueFromPipelineByPropertyName

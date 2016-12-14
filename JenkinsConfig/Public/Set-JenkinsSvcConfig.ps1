@@ -14,19 +14,19 @@
             )]
         [ValidateNotNullOrEmpty()]
         [io.FileInfo]
-        $FilePath
+        $JenkinsXMLPath
     )
     
     #If file empty, Create New XML document
-    # else load FilePath
+    # else load JenkinsXMLPath
     begin {
-        if ((Test-Path $FilePath)) {
+        if ((Test-Path $JenkinsXMLPath)) {
             $NewJenkinsXml = New-Object -TypeName System.Xml.XmlDocument
-            $NewJenkinsXml.Load($FilePath.FullName)
+            $NewJenkinsXml.Load($JenkinsXMLPath.FullName)
             $RootNode = $NewJenkinsXml.ChildNodes | ? name -ne '#comment'
         }
         else {
-            $FileInfo = New-Item -ItemType File -Path $FilePath -Force -ErrorAction Stop
+            $FileInfo = New-Item -ItemType File -Path $JenkinsXMLPath -Force -ErrorAction Stop
             $NewJenkinsXml = New-Object -TypeName System.Xml.XmlDocument
             $RootNode = $NewJenkinsXml.CreateElement("Service")
             [void]$NewJenkinsXml.AppendChild($RootNode)
@@ -77,7 +77,7 @@
                 [void]$onfailureNode.Attributes.Append($onfailureActionAttr)
                 [void]$RootNode.AppendChild($onfailureNode)
         }
-        #$NewJenkinsXml.Save($FilePath.FullName)
+        #$NewJenkinsXml.Save($JenkinsXMLPath.FullName)
     }
 
     Process {
@@ -95,7 +95,7 @@
     }
 
     end {
-        $NewJenkinsXml.Save($FilePath.FullName)
+        $NewJenkinsXml.Save($JenkinsXMLPath.FullName)
     }
 }
 
