@@ -137,6 +137,7 @@
             Write-Output -InputObject $UpdateSource
             return
         }
+        $ListFoundArguments = @()
         foreach ($Argument in $UpdateSource) {
             #search argument in Existing Args
                 #if Type Match
@@ -174,7 +175,6 @@
             else {
                 $PreFilteredArguments = $ExistingArguments
             }
-
             $ArgumentFound = $false
             foreach ($ArgumentMatchingByType in $PreFilteredArguments) {
                 $matchOn = $AllArgumentProperties | Where-Object {$_ -in $MatchArgumentOn}
@@ -200,6 +200,14 @@
                                 Throw "Error The Arguments match exactly"
                             }
                         }
+                        '^ReturnIfPresent$' {
+                            $ListFoundArguments += $Argument
+                        }
+                        '^ReturnIfExact$' {
+                            if(!(Compare-Object -ReferenceObject $Argument -DifferenceObject $ArgumentMatchingByType -Property $AllArgumentProperties)) {
+                                $ListFoundArguments += $Argument
+                            }
+                        }
                     }
                 }
             }
@@ -207,7 +215,12 @@
                 $ExistingArguments += $Argument
             }
         }
-        Write-Output -InputObject $ExistingArguments
+        if ($ResolutionBehavior -match '^Return') {
+            Write-Output -InputObject $ListFoundArguments
+        }
+        else {
+            Write-Output -InputObject $ExistingArguments
+        }
     }
 
 }

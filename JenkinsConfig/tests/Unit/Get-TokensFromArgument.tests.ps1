@@ -7,7 +7,7 @@ Describe 'Get-TokensFromArgument' {
   Context 'General context'   {
 
     It 'runs without errors' {
-        { Get-TokensFromArgument -Argument ([PSCustomObject]@{PSTypeName='Java.Option.SingleKey';property='client';}) } | Should Not Throw
+        { Get-TokensFromArgument -ArgumentList ([PSCustomObject]@{PSTypeName='Java.Option.SingleKey';property='client';}) } | Should Not Throw
     }
 
     It 'throws when argument is null'     {
@@ -28,7 +28,7 @@ Describe 'Get-TokensFromArgument' {
     
     foreach ($test in $listOfTests) {
         It "Format $($test.result) to $($test.testInput)" -Pending:(.{try{[bool]::Parse($test.pending)}catch{$false}}) {
-            $Result = Get-TokensFromArgument -Argument $test.result
+            $Result = Get-TokensFromArgument -ArgumentList $test.result
             Compare-Object -ReferenceObject $test.TestInput -DifferenceObject $result | Should BeNullOrEmpty
         }
     }

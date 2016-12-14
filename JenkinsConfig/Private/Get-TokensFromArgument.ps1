@@ -16,8 +16,8 @@
       $Arguments = ((Get-JenkinsJavaArguments -JenkinsXMLPath .\tests\Unit\resources\jenkins.xml).options | Get-ArgumentsFromTokens)
       $Tokens = $Arguments | Get-TokensFromArgument
 
-      .PARAMETER Argument
-      Argument Object as defined in the ArgumentDefinitionFile.
+      .PARAMETER ArgumentList
+      List of Argument Objects as defined in the ArgumentDefinitionFile.
       The Argument Definition is selected by the first match between its TypeName property and the
       PSTypeNames[0] of the $Argument.
       The formater will be split in an array based on spaces, so that a formatter "-{0} {1}" returns 2 tokens
@@ -39,8 +39,8 @@
             ,ValueFromPipeline
             ,ValueFromPipelineByPropertyName
             )]
-        [PSCustomObject]
-        $Argument,
+        [PSCustomObject[]]
+        $ArgumentList,
 
         [Parameter(
             ,ValueFromPipelineByPropertyName
@@ -60,7 +60,7 @@
     }
 
     Process {
-        foreach ($CmdArg in $Argument) {
+        foreach ($CmdArg in $ArgumentList) {
             $Definition = $ArgumentsDefinition |
                             Where-Object { $_.typeName -eq $CmdArg.PSTypeNames[0] } |
                             Select-Object -First 1

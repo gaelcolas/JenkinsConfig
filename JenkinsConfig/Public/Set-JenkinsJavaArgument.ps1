@@ -2,14 +2,24 @@
     <#
       .SYNOPSIS
       Describe the function here
+
       .DESCRIPTION
       Describe the function in more detail
+
       .EXAMPLE
-      Give an example of how to use it
+      $Params = @{
+        JenkinsArgumentTokens= '--httpport=443'
+        ResolutionBehavior = 'UpdateAndAdd'
+        JenkinsXMLPath = 'C:\Program Files (x86)\Jenkins\Jenkins.xml'
+      }
+      Set-JenkinsJavaArgument @Params
+
       .EXAMPLE
       Give another example of how to use it
+
       .PARAMETER Param1
       The param1
+
       .PARAMETER param2
       The second param
       #>
@@ -23,32 +33,45 @@
             Mandatory,
             ValueFromPipelineByPropertyName
             )]
-        [PSTypeName('Jenkins.config.JavaArguments')]
-        [PSCustomObject]
-
-        $JenkinsJavaArguments,
+        [string[]]
+        $JenkinsArgumentTokens,
 
         [Parameter(
             Mandatory,
             ValueFromPipelineByPropertyName
             )]
-        [ValidateSet('UpdateOnly','UpdateAndAdd','ExactAndFinal','Remove','ErrorIfPresent')]
+        [ValidateSet(
+            'UpdateOnly',
+            'UpdateAndAdd',
+            'ExactAndFinal',
+            'RemoveIfPresent',
+            'RemoveIfExact'
+            )]
         [string]
-        $ResolutionMode,
+        $ResolutionBehavior,
 
         [Parameter(
             ValueFromPipelineByPropertyName
             )]
         [IO.FileInfo]
-        $JenkinsXMLPath = [IO.FileInfo]::new('C:/Program Files (x86)/Jenkins/Jenkins.xml')
+        $JenkinsXMLPath = [IO.FileInfo]::new('C:/Program Files (x86)/Jenkins/Jenkins.xml'),
+
+        [Parameter(
+            ValueFromPipelineByPropertyName
+            )]
+        [io.FileInfo]
+        $ArgumentsDefinitionFile = "$PSScriptRoot/../config/JenkinsArguments.definition.json"
     )
 
     Process {
-        $JenkinsXml = Get-JenkinsXml -JenkinsXMLPath $JenkinsXMLPath -ErrorAction Stop
-        $JenkinsXml.service.arguments = Get-JavaCommandFromJavaCommandObject -JavaCommandObject $JenkinsJavaArguments
+        $JenkinsConfig = Get-jenkinsSvcConfig -JenkinsXMLPath $JenkinsXMLPath -ErrorAction Stop
+        $CurrentArguments = Get-ArgumentsFromTokens -ArgumentsTokens $JenkinsConfig.Service.arguments.Arguments -ArgumentsDefinitionFile $ArgumentsDefinitionFile
+        $ArgumentsToUpdate = Get-ArgumentsFromTokens -ArgumentsTokens $JenkinsArgumentTokens -ArgumentsDefinitionFile $ArgumentsDefinitionFile
+        $NewJenkinsArguments = Merge-Arguments -UpdateSource $ArgumentsToUpdate -ExistingArguments $CurrentArguments -ResolutionBehavior $ResolutionBehavior -ArgumentsDefinitionFile $ArgumentsDefinitionFile
+        $JenkinsConfig.service.arguments.Arguments = Get-TokensFromArgument -ArgumentList $NewJenkinsArguments -ArgumentsDefinitionFile $ArgumentsDefinitionFile
 
         if ($PSCmdlet.ShouldProcess($JenkinsXMLPath.FullName)) {
-            $JenkinsXml.Save($JenkinsXMLPath.FullName)
+            Set-JenkinsSvcConfig -ConfigurationObject $JenkinsConfig -JenkinsXMLPath $JenkinsXMLPath
         }
     }
 }

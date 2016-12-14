@@ -77,7 +77,6 @@
                 [void]$onfailureNode.Attributes.Append($onfailureActionAttr)
                 [void]$RootNode.AppendChild($onfailureNode)
         }
-        #$NewJenkinsXml.Save($JenkinsXMLPath.FullName)
     }
 
     Process {

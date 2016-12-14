@@ -4,7 +4,7 @@
   <description>This service runs Jenkins continuous integration system.</description>
   <env name="JENKINS_HOME" value="%BASE%" />
   <executable>%BASE%\jre\bin\java</executable>
-  <arguments>-Xrs -Xmx256m -Dhudson.lifecycle=hudson.lifecycle.WindowsServiceLifecycle -Djenkins.install.runSetupWizard=false -Jar "%BASE%\jenkins.war" --httpPort=8080 --webroot="%BASE%\war"</arguments>
+  <arguments> -Xrs -Xmx256m -Dhudson.lifecycle=hudson.lifecycle.WindowsServiceLifecycle -Djenkins.install.runSetupWizard=false -Jar "%BASE%\jenkins.war" --httpport=8080 --webroot="%BASE%\war"</arguments>
   <logmode>rotate</logmode>
   <onfailure action="restart" />
 </Service>
