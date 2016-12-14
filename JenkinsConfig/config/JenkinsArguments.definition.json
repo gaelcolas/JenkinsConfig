@@ -4,7 +4,7 @@
         ,"selector":"^--[^=]+=?.*$"
         ,"parser":"^--([^=]+)=?(.*)$"
         ,"properties": ["key","value"]
-        ,"formater":"--{0}:{1}"
+        ,"formater":"--{0}={1}"
         ,"description":""
         ,"typeName": "Jenkins.KeyValuePair"
    }
