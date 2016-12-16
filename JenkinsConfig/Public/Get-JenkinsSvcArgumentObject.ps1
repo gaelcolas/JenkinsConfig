@@ -1,7 +1,7 @@
-﻿function Get-JenkinsJavaArguments {
+﻿function Get-JenkinsSvcArgumentObject {
     <#
       .SYNOPSIS
-      Returns a Jenkins.config.JavaArguments object of the Jenkins.xml
+      Returns a list of Jenkins.config.JavaParameter objects of the Jenkins.xml
       service.arguments node.
 
       .DESCRIPTION
@@ -10,14 +10,14 @@
       Options,jar/class, and arguments as Tokens (array of strings).
       
       .EXAMPLE
-      $object = Get-JenkinsJavaArguments -JenkinsXMLPath C:\Jenkins\Jenkins.xml
+      $object = Get-JenkinsSvcParameter -JenkinsXMLPath C:\Jenkins\Jenkins.xml
       $object | convertto-Json
       
       .PARAMETER JenkinsXMLPath
       File path to the Jenkins XML configuration file. Default to C:\Program Files (x86)\Jenkins\Jenkins.xml
       #>
     [cmdletBinding()]
-    [OutputType('Jenkins.config.JavaArguments')]
+    [OutputType('Jenkins.config.SvcParameter[]')]
     Param(
         [Parameter(
             ValueFromPipeline,

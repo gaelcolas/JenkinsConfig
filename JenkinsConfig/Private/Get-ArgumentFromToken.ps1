@@ -1,4 +1,4 @@
-﻿function Get-ArgumentsFromTokens {
+﻿function Get-ArgumentFromToken {
     <#
       .SYNOPSIS
       Returns a list of PSObjects representing logical arguments based on a list of Tokens.

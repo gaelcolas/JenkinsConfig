@@ -47,9 +47,10 @@
         }
 
         $OptionsStack = @()
+        $isClassPath = $false
         foreach ($cmdToken in $TokenizedCommand) {
             $cmdToken = $cmdToken.Trim()
-            if ($CommandObj.Executable -eq $null) {
+            if ($null -eq $CommandObj.Executable) {
                 if ($cmdToken -match 'javaw?.{0,4}$') {
                     Write-Verbose -message ('Found Executable {0}' -f $cmdToken)
                     $CommandObj.Executable = $cmdToken
@@ -60,8 +61,8 @@
                     $OptionsStack += $cmdToken
                 }
             }
-            elseif($CommandObj.Executable -ne $null -and
-                   $CommandObj.Options -eq $null
+            elseif($null -ne $CommandObj.Executable -and
+                   $null -eq $CommandObj.Options
                    ) {
                 if ($cmdToken -match '^-jar$'){
                     Write-Verbose -Message 'Command is running a JAR'

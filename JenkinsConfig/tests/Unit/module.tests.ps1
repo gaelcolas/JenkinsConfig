@@ -19,23 +19,31 @@ Describe "$moduleName" {
 
   }
 
-  Context 'Unit Test Quality' {
-    $PrivateFunctions = Get-ChildItem -Path "$modulePath\Private\*.ps1"
-    $PublicFunctions =  Get-ChildItem -Path "$modulePath\Public\*.ps1"
+    #$PrivateFunctions = Get-ChildItem -Path "$modulePath\Private\*.ps1"
+    #$PublicFunctions =  Get-ChildItem -Path "$modulePath\Public\*.ps1"
+    $allModuleFunctions = @()
+    $allModuleFunctions += Get-ChildItem -Path "$modulePath\Private\*.ps1"
+    $allModuleFunctions += Get-ChildItem -Path "$modulePath\Public\*.ps1"
 
-    Foreach ($PrivateFunction in $PrivateFunctions) {
-        $functionName = $PrivateFunction.BaseName
-        It "$functionName has a unit test" {
-            Test-Path "$modulePath\tests\Unit\$functionName.tests.ps1" | Should be true
-        }
+    if (Get-Command Invoke-ScriptAnalyzer -ErrorAction SilentlyContinue) {
+        $scriptAnalyzerRules = Get-ScriptAnalyzerRule
+    }
+    else {
+        Write-Warning "ScriptAnalyzer not found!"
     }
 
-    Foreach ($PublicFunction in $PublicFunctions) {
-        $functionName = $PublicFunction.BaseName
-        It "$functionName has a unit test" {
-            Test-Path "$modulePath\tests\Unit\$functionName.tests.ps1" | Should be true
+    foreach ($function in $allModuleFunctions) {
+        Context "Quality for $($function.BaseName)" {
+            It "$($function.BaseName) has a unit test" {
+                Test-Path "$modulePath\tests\Unit\$($function.BaseName).tests.ps1" | Should be true
+            }
+        if ($scriptAnalyzerRules) {
+                It "Script Analyzer for $($function.BaseName)" {
+                    forEach ($scriptAnalyzerRule in $scriptAnalyzerRules) {
+                        (Invoke-ScriptAnalyzer -Path $function.FullName -IncludeRule $scriptAnalyzerRule).count | Should Be 0
+                    }
+                }
+            }
         }
     }
-
-  }
 }

@@ -1,0 +1,72 @@
+[
+    {
+        "JenkinsSvcInstall": [
+            {
+                "Name": "Ensure",
+                "Type": "String",
+                "Attribute": "Read",
+                "ValidateSet": ["Present","Absent"],
+                "Description": "Says whether the service is installed on the machine."
+            },
+            {
+                "Name": "InstallKey",
+                "Type": "String",
+                "Attribute": "Key",
+                "Description": "Unique identifier for your DSC installation"
+            },
+            {
+                "Name": "Port",
+                "Type": "Uint16",
+                "Attribute": "Write",
+                "Description": "Port the Jenkins Instance should listen on."
+            },
+            {
+                "Name": "RunSetupWizard",
+                "Type": "Boolean",
+                "Attribute": "Write",
+                "Description": "Enable or Disable the Unlock screen in Jenkins v2 and above."
+            },
+            {
+                "Name": "AdminCredential",
+                "Type": "PSCredential",
+                "Attribute": "Write",
+                "Description": "Specifies a user and password account to be set as Administrator of the Jenkins Instance, using the default security mode."
+            },
+            {
+                "Name": "RunServiceAs",
+                "Type": "PSCredential",
+                "Attribute": "Write",
+                "Description": "Specifies an account to run the service as. If not set, Jenkins will run as NETWORK SERVICE"
+            }
+        ]
+    },
+    {
+        "JenkinsSvcJavaOption": [
+            {
+                "Name": "ResolutionMode",
+                "Type": "String",
+                "Attribute": "Write",
+                "ValidateSet": ["UpdateOnly","UpdateAndAdd","ExactAndFinal","RemoveIfPresent","RemoveIfExact","ErrorArgumentExists","ErrorArgumentIfExact","ReturnIfPresent","ReturnIfExact"],
+                "Description": "Says how the list of options should be merged with the existing one."
+            },
+            {
+                "Name": "Tokens",
+                "Type": "string[]",
+                "Attribute": "Required",
+                "Description": "List of Tokens to be Merged with the existing one, based on the ResolutionBehavior"
+            },
+            {
+                "Name": "RunName",
+                "Attribute": "Key",
+                "Description": "Unique identifier for this settings",
+                "Type": "String"
+            },
+            {
+                "Name": "ServiceName",
+                "Attribute": "key",
+                "Description": "Identifying the Service Name to find the JENKINS_HOME based on teh Service executable.",
+                "Type": "String"
+            }
+        ]
+    }
+]

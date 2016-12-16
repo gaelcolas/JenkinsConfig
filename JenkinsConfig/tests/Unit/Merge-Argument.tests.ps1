@@ -2,7 +2,7 @@
 $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.'
 . "$here/../../*/$sut" #for files in Public\Private folders, called from the tests folder
 
-Describe 'Merge-Arguments' {
+Describe 'Merge-Argument' {
 
   Context 'General test'   {
     $param = @{
@@ -12,11 +12,11 @@ Describe 'Merge-Arguments' {
     }
     $ExpectedResult = @([PSCustomObject]@{PSTypeName='Java.Option.SingleKey';property='client';},[PSCustomObject]@{PSTypeName='Java.Option.SingleKey';property='server';},[PSCustomObject]@{PSTypeName='Java.Option.DPropertyValue';property='property';value='property'})
     It 'runs without errors' {
-        { Merge-Arguments @param } | Should Not Throw
+        { Merge-Argument @param } | Should Not Throw
     }
 
     It 'runs the basic test' {
-        $result = Merge-Arguments @param
+        $result = Merge-Argument @param
         foreach ($element in $ExpectedResult) {
             $properties = $element | Get-Member -MemberType NoteProperty | select -ExpandProperty Name
             $index = $ExpectedResult.IndexOf($element)
@@ -25,7 +25,7 @@ Describe 'Merge-Arguments' {
     }
 
     It 'Throws if UpdateSource and ExistingArgs is null'     {
-      { Merge-Arguments -UpdateSource $null -ExistingArguments $null } | Should throw 
+      { Merge-Argument -UpdateSource $null -ExistingArguments $null } | Should throw 
     }
   }
   
@@ -51,14 +51,14 @@ Describe 'Merge-Arguments' {
         It "Test $($test.UpdateSource) in mode $($test.ResoluionBehavior)" {
             if ($test.ResolutionBehavior -match 'Error') {
                 if ($test.ExpectedResult -match 'error') {
-                    { Merge-Arguments @param } | Should Throw
+                    { Merge-Argument @param } | Should Throw
                 }
                 else {
-                    { Merge-Arguments @param } | Should Not Throw
+                    { Merge-Argument @param } | Should Not Throw
                 }
             }
             else {
-                $result = Merge-Arguments @param
+                $result = Merge-Argument @param
                 foreach ($element in $test.ExpectedResult) {
                     $properties = ($element | Get-Member -MemberType NoteProperty).Name
                     $index = $test.ExpectedResult.IndexOf($element)

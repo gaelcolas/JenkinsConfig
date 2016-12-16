@@ -1,4 +1,4 @@
-﻿function Merge-Arguments {
+﻿function Merge-Argument {
     <#
       .SYNOPSIS
       Merges two lists of arguments according to specified behavior.

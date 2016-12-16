@@ -7,11 +7,11 @@ Describe 'Get-ArgumentsFromTokens' {
   Context 'General context'   {
 
     It 'runs without errors' {
-        { Get-ArgumentsFromTokens -ArgumentsTokens '-Option' } | Should Not Throw
+        { Get-ArgumentFromToken -ArgumentsTokens '-Option' } | Should Not Throw
     }
 
     It 'throws when JavaOptionToken is null' {
-      { Get-ArgumentsFromTokens -ArgumentsTokens $null } | Should Throw
+      { Get-ArgumentFromToken -ArgumentsTokens $null } | Should Throw
     }
 
   }
@@ -32,7 +32,7 @@ Describe 'Get-ArgumentsFromTokens' {
     foreach ($test in $listOfTests) {
         It "parses $($test.testInput) to $($test.result)" -Pending:(.{try{[bool]::Parse($test.pending)}catch{$false}}) {
             $propertiesToTest = $test.result | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name
-            $Result = Get-ArgumentsFromTokens -ArgumentsTokens $test.TestInput
+            $Result = Get-ArgumentFromToken -ArgumentsTokens $test.TestInput
             Compare-Object -ReferenceObject $test.result -DifferenceObject $result -Property $propertiesToTest | Should BeNullOrEmpty
             $Result.PSTypeNames | Should be $test.result.PSTypeNames
         }

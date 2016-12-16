@@ -21,7 +21,7 @@ function Get-JenkinsXml {param([io.fileinfo]$JenkinsXml)}
 function Get-JavaCommandObjectFromTokenizedCommand { param([string[]]$TokenizedCommand) }
 function Get-TokenizedCommand { param([PSCustomObject[]]$InputObject) }
 
-Describe 'Get-JenkinsJavaArguments' {
+Describe 'Get-JenkinsSvcArgumentObject' {
     Mock -CommandName Get-JenkinsXml -MockWith { $SampleJenkinsXml}
     Mock -CommandName Get-TokenizedCommand -MockWith { $arraySample }
 
@@ -42,11 +42,11 @@ Describe 'Get-JenkinsJavaArguments' {
   Context 'General context'   {
 
     It 'runs without errors' {
-        { Get-JenkinsJavaArguments -JenkinsXMLPath C:\this\is\mocked.ps1 } | Should Not Throw
+        { Get-JenkinsSvcArgumentObject -JenkinsXMLPath C:\this\is\mocked.ps1 } | Should Not Throw
     }
 
     It 'does not return anything'     {
-      $result = Get-JenkinsJavaArguments
+      $result = Get-JenkinsSvcArgumentObject
       Compare-Object -ReferenceObject $sampleOutput -DifferenceObject $result -Property Executable,Options,isJar,ClassOrJar,Arguments| Should BeNullOrEmpty
     }
   }

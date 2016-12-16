@@ -3,8 +3,8 @@ $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.'
 . "$here/../../*/$sut" #for files in Public\Private folders, called from the tests folder
 #region functions for Mock
 function Get-jenkinsSvcConfig {[CmdletBinding()]param($JenkinsXMLPath)} #-JenkinsXMLPath $JenkinsXMLPath -ErrorAction Sto
-function Get-ArgumentsFromTokens {param([string[]]$ArgumentsTokens, [io.fileinfo]$ArgumentsDefinitionFile)}
-function Merge-Arguments {param()}
+function Get-ArgumentsFromToken {param([string[]]$ArgumentsTokens, [io.fileinfo]$ArgumentsDefinitionFile)}
+function Merge-Argument {param()}
 function Get-TokensFromArgument {param($UpdateSource,$ExistingArguments,$ResolutionBehavior,$ArgumentsDefinitionFile)}
 function Set-JenkinsSvcConfig {param($configurationObject,$JenkinsXMLPath)}
 #endregion
@@ -12,6 +12,7 @@ function Set-JenkinsSvcConfig {param($configurationObject,$JenkinsXMLPath)}
 $Params = @{
         JenkinsArgumentTokens= '--httpport=443'
         ResolutionBehavior = 'UpdateAndAdd'
+        JavaOptionOrJarArgument = 'JavaOption'
         JenkinsXMLPath = "$here/Resources/NewJenkins.xml"
       }
 $JenkinsArgObject = [PSCustomObject]@{PSTypeName='Jenkins.KeyValuePair';property='httpPort';value='443'}
@@ -42,18 +43,18 @@ $SampleJenkinsXml = [PSCustomObject]@{
 #endregion
 
 Describe 'Set-JenkinsJavaArgument' {
-
+#TODO: Handle the test when JavaOptionOrJarArgument = JarArgument
 Mock Get-JenkinsSvcConfig -MockWith { $SampleJenkinsXml } -Verifiable
-Mock Get-ArgumentsFromTokens -MockWith { $JenkinsArgObject } -ParameterFilter {$ArgumentsTokens -eq $SampleJenkinsXml.Service.arguments.Arguments}
-Mock Get-ArgumentsFromTokens -MockWith { $JenkinsArgObject } -Verifiable -ParameterFilter {$ArgumentsTokens -eq $Params.JenkinsArgumentTokens }
-Mock Merge-Arguments -MockWith { $JenkinsArgObject } -Verifiable
+Mock Get-ArgumentsFromToken -MockWith { $JenkinsArgObject } -ParameterFilter {$ArgumentsTokens -eq $SampleJenkinsXml.Service.arguments.Arguments}
+Mock Get-ArgumentsFromToken -MockWith { $JenkinsArgObject } -Verifiable -ParameterFilter {$ArgumentsTokens -eq $Params.JenkinsArgumentTokens }
+Mock Merge-Argument -MockWith { $JenkinsArgObject } -Verifiable
 Mock Get-TokensFromArgument -MockWith { $ArgumentsTokens } -Verifiable
 Mock Set-JenkinsSvcConfig -Verifiable
 
   Context 'General functional tests'   {
 
     It 'runs without errors and calls functions' {
-        { Set-JenkinsJavaArgument @Params } | Should Not Throw
+        { Set-JenkinsSvcParameter @Params } | Should Not Throw
         Assert-VerifiableMocks
     }
   }

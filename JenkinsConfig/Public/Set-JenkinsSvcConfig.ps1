@@ -1,5 +1,8 @@
 ﻿function Set-JenkinsSvcConfig {
-    [CmdletBinding()]
+    [CmdletBinding(
+        SupportsShouldProcess,
+        ConfirmImpact='Medium'
+        )]
     Param (
         [Parameter(
             Mandatory,
@@ -23,10 +26,10 @@
         if ((Test-Path $JenkinsXMLPath)) {
             $NewJenkinsXml = New-Object -TypeName System.Xml.XmlDocument
             $NewJenkinsXml.Load($JenkinsXMLPath.FullName)
-            $RootNode = $NewJenkinsXml.ChildNodes | ? name -ne '#comment'
+            $RootNode = $NewJenkinsXml.ChildNodes | Where-Object { $_.name -ne '#comment' }
         }
         else {
-            $FileInfo = New-Item -ItemType File -Path $JenkinsXMLPath -Force -ErrorAction Stop
+            $null = New-Item -ItemType File -Path $JenkinsXMLPath -Force -ErrorAction Stop
             $NewJenkinsXml = New-Object -TypeName System.Xml.XmlDocument
             $RootNode = $NewJenkinsXml.CreateElement("Service")
             [void]$NewJenkinsXml.AppendChild($RootNode)
@@ -94,7 +97,9 @@
     }
 
     end {
-        $NewJenkinsXml.Save($JenkinsXMLPath.FullName)
+        if($PSCmdlet.ShouldProcess($JenkinsXMLPath)) {
+            $NewJenkinsXml.Save($JenkinsXMLPath.FullName)
+        }
     }
 }
 

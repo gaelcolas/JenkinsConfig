@@ -1,4 +1,4 @@
-﻿function Set-JenkinsJavaArgument {
+﻿function Set-JenkinsSvcParameter {
     <#
       .SYNOPSIS
       Describe the function here
@@ -35,6 +35,13 @@
             )]
         [string[]]
         $JenkinsArgumentTokens,
+        
+        [Parameter(
+            Mandatory,
+            ValueFromPipelineByPropertyName
+            )]
+        [ValidateSet('JavaOption','JarArgument')]
+        $JavaOptionOrJarArgument,
 
         [Parameter(
             Mandatory,
@@ -60,15 +67,34 @@
             ValueFromPipelineByPropertyName
             )]
         [io.FileInfo]
-        $ArgumentsDefinitionFile = "$PSScriptRoot/../config/JenkinsArguments.definition.json"
+        $ArgumentsDefinitionFile = $null
     )
 
     Process {
+
+        switch ($JavaOptionOrJarArgument) {
+            'JavaOption'  { 
+                $ArgumentsProperty = 'Options'   
+                $DefaultArgumentDefinitionFile = "$PSScriptRoot/../config/JavaOptions.definition.json"
+            }
+            'JarArgument' { 
+                $ArgumentsProperty = 'Arguments' 
+                $DefaultArgumentDefinitionFile = "$PSScriptRoot/../config/JenkinsArguments.definition.json"
+            }
+            Default {
+                Throw ('JavaOptionOrJarArgument value {0} not recognized' -f $JavaOptionOrJarArgument)
+            }
+        }
+
+        if ($PSBoundParameters.ContainsKey('ArgumentsDefinitionFile')) {
+            $ArgumentsDefinitionFile = $DefaultArgumentDefinitionFile
+        }
+
         $JenkinsConfig = Get-jenkinsSvcConfig -JenkinsXMLPath $JenkinsXMLPath -ErrorAction Stop
-        $CurrentArguments = Get-ArgumentsFromTokens -ArgumentsTokens $JenkinsConfig.Service.arguments.Arguments -ArgumentsDefinitionFile $ArgumentsDefinitionFile
-        $ArgumentsToUpdate = Get-ArgumentsFromTokens -ArgumentsTokens $JenkinsArgumentTokens -ArgumentsDefinitionFile $ArgumentsDefinitionFile
-        $NewJenkinsArguments = Merge-Arguments -UpdateSource $ArgumentsToUpdate -ExistingArguments $CurrentArguments -ResolutionBehavior $ResolutionBehavior -ArgumentsDefinitionFile $ArgumentsDefinitionFile
-        $JenkinsConfig.service.arguments.Arguments = Get-TokensFromArgument -ArgumentList $NewJenkinsArguments -ArgumentsDefinitionFile $ArgumentsDefinitionFile
+        $CurrentArguments = Get-ArgumentsFromToken -ArgumentsTokens $JenkinsConfig.Service.arguments.($ArgumentsProperty) -ArgumentsDefinitionFile $ArgumentsDefinitionFile
+        $ArgumentsToUpdate = Get-ArgumentsFromToken -ArgumentsTokens $JenkinsArgumentTokens -ArgumentsDefinitionFile $ArgumentsDefinitionFile
+        $NewJenkinsArguments = Merge-Argument -UpdateSource $ArgumentsToUpdate -ExistingArguments $CurrentArguments -ResolutionBehavior $ResolutionBehavior -ArgumentsDefinitionFile $ArgumentsDefinitionFile
+        $JenkinsConfig.service.arguments.($ArgumentsProperty) = Get-TokensFromArgument -ArgumentList $NewJenkinsArguments -ArgumentsDefinitionFile $ArgumentsDefinitionFile
 
         if ($PSCmdlet.ShouldProcess($JenkinsXMLPath.FullName)) {
             Set-JenkinsSvcConfig -ConfigurationObject $JenkinsConfig -JenkinsXMLPath $JenkinsXMLPath
