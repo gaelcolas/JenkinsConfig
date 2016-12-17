@@ -1,10 +1,18 @@
 ﻿$here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.'
 . "$here/../../*/$sut" #for files in Public\Private folders, called from the tests folder
+#region functions for Mock
+function Get-JenkinsHomeFromSvcName { Param($ServiceId) }
+function Get-jenkinsSvcConfig {[CmdletBinding()]param($JenkinsXMLPath)} #-JenkinsXMLPath $JenkinsXMLPath -ErrorAction Sto
+function Get-ArgumentFromToken {param([string[]]$ArgumentToken, [io.fileinfo]$ArgumentsDefinitionFile)}
+#endregion
 
-function Get-JenkinsXml {[cmdletBinding()]param($JenkinsXMLPath)}
-function Get-JenkinsSvcArgumentObject {param($JenkinsXMLPath) }
-
+$Params = @{
+        JavaOptionOrJarArgument = 'JavaOption'
+        JenkinsXMLPath = "$here/Resources/NewJenkins.xml"
+      }
+$JenkinsArgObject = [PSCustomObject]@{PSTypeName='Jenkins.KeyValuePair';property='httpPort';value='443'}
+#region Creating mocked Objects
 $argumentsString = '-Xrs -Xmx256m -Dhudson.lifecycle=hudson.lifecycle.WindowsServiceLifecycle -Djenkins.install.runSetupWizard=false -Jar "%BASE%\jenkins.war" --httpPort=8080 --webroot="%BASE%\war"'
 $ArgumentsTokens= $argumentsString -split '\s'
 $SampleArgumentObject = [PSCustomObject]@{
@@ -28,23 +36,20 @@ $SampleJenkinsXml = [PSCustomObject]@{
                             onfailure= [PSCustomObject]@{action='restart'}
                         })
                     }
+#endregion
 
+Describe 'Get-JenkinsJavaArgument' {
+#TODO: Handle the test when JavaOptionOrJarArgument = JarArgument
+Mock Get-JenkinsHomeFromSvcName -MockWith {'C:\File\Path.xml'}
+Mock Get-JenkinsSvcConfig -MockWith { $SampleJenkinsXml } -Verifiable
+Mock Get-ArgumentFromToken -MockWith { $JenkinsArgObject } -Verifiable
 
-Describe 'Get-JenkinsSvcConfig' {
+  Context 'General functional tests'   {
 
-Mock -CommandName Get-JenkinsXml -MockWith {$SampleJenkinsXml}
-Mock -CommandName Get-JenkinsSvcArgumentObject { $SampleJenkinsXml.service.arguments }
-
-  Context 'General context'   {
-
-    It 'runs without errors' {
-        { Get-JenkinsSvcConfig } | Should Not Throw
-    }
-    
-    It 'Returns the expected object based'     {
-      $result = Get-JenkinsSvcConfig
-      Compare-Object -ReferenceObject $SampleJenkinsXml -DifferenceObject $result -Property service | Should BeNullOrEmpty 
-      Compare-Object -ReferenceObject $SampleJenkinsXml.Service -DifferenceObject $result.service -Property id,name,description,env,executable,arguments,logmode,onfailure | Should BeNullOrEmpty  
+    It 'runs without errors and calls functions' {
+        $cmdResult = Get-JenkinsSvcParameter @Params  
+        Compare-Object -ReferenceObject $JenkinsArgObject -DifferenceObject $cmdResult -Property property,value| Should beNullOrEmpty
+        Assert-VerifiableMocks
     }
   }
 }

@@ -1,27 +1,33 @@
 ﻿function Get-JenkinsSvcParameter {
     <#
       .SYNOPSIS
-      Describe the function here
+      Returns the Options or Arguments objects of the Jenkins.xml argument node.
 
       .DESCRIPTION
-      Describe the function in more detail
+      Gets the content of the Jenkins.xml's Argument node and parse either the Options or the Arguments
+      of the file, which defines the arguments passed to either the JVM or the Jenkins jar.
 
       .EXAMPLE
       $Params = @{
-        JenkinsArgumentTokens= '--httpport=443'
-        ResolutionBehavior = 'UpdateAndAdd'
         JenkinsXMLPath = 'C:\Program Files (x86)\Jenkins\Jenkins.xml'
       }
-      Set-JenkinsJavaArgument @Params
+      Get-JenkinsSvcParameter @Params
 
-      .EXAMPLE
-      Give another example of how to use it
+      .PARAMETER JavaOptionOrJarArgument
+      Define which part of the Java command Argument from the Jenkins.xml you want to retrieve:
+      Java [Options] -Jar JARNAME.Jar [Argument]
 
-      .PARAMETER Param1
-      The param1
+      .PARAMETER JenkinsXMLPath
+      Specify the file location of the Jenkins.xml file to read, by default it will look within the JENKINS_HOME
+      from the default service name.
 
-      .PARAMETER param2
-      The second param
+      .PARAMETER ServiceName
+      To lookup an installed Jenkins service, and find the JENKINS_HOME based on its executable's parent folder.
+
+      .PARAMETER ArgumentsDefinitionFile
+      To lookup an installed Jenkins service, and find the JENKINS_HOME based on its executable's parent folder.
+
+      
       #>
     [cmdletBinding(DefaultParameterSetName='ByServiceName')]
     [OutputType('void')]
@@ -76,12 +82,12 @@
             }
         }
 
-        if ($PSBoundParameters.ContainsKey('ArgumentsDefinitionFile')) {
+        if (!$PSBoundParameters.ContainsKey('ArgumentsDefinitionFile')) {
             $ArgumentsDefinitionFile = $DefaultArgumentDefinitionFile
         }
 
         $JenkinsConfig = Get-jenkinsSvcConfig -JenkinsXMLPath $JenkinsXMLPath -ErrorAction Stop
-        $CurrentArguments = Get-ArgumentsFromToken -ArgumentsTokens $JenkinsConfig.Service.arguments.($ArgumentsProperty) -ArgumentsDefinitionFile $ArgumentsDefinitionFile
+        $CurrentArguments = Get-ArgumentFromToken -ArgumentToken $JenkinsConfig.Service.arguments.($ArgumentsProperty) -ArgumentsDefinitionFile $ArgumentsDefinitionFile
        
        Write-Output -InputObject $CurrentArguments
     }

@@ -8,7 +8,7 @@
       and returns its Parent as the Jenkins Home.
 
       .EXAMPLE
-      Get-JenkinsHomeFromServiceId -ServiceId Jenkins
+      Get-JenkinsHomeFromSvcName -ServiceId Jenkins
       #Output: C:\Program Files (x86)\Jenkins
 
       .PARAMETER ServiceId
@@ -17,7 +17,7 @@
       
       #>
     [cmdletBinding()]
-    [OutputType('io.FileInfo')]
+    [OutputType('io.DirectoryInfo')]
     Param(
         [Parameter(
             ValueFromPipeline
@@ -28,12 +28,18 @@
         $ServiceId = 'Jenkins'
     )
 
+    Begin {
+        if (!$ServiceId) {
+            $ServiceId = 'Jenkins'
+        }
+    }
+
     Process {
 
         if(!($Service = Get-CimInstance -ClassName win32_service | Where-Object { $_.name -match $ServiceId })) {
             Throw "The Service with Name $ServiceID was not found. Did you provide the DisplayName instead?"
         }
 
-        Write-Output -InputObject ([io.fileInfo](split-path -Parent -Path ($Service.PathName -replace '"') ))
+        Write-Output -InputObject ([io.DirectoryInfo](split-path -Parent -Path ($Service.PathName -replace '"') ))
     }
 }

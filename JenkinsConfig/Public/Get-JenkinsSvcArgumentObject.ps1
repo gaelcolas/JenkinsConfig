@@ -10,7 +10,7 @@
       Options,jar/class, and arguments as Tokens (array of strings).
       
       .EXAMPLE
-      $object = Get-JenkinsSvcParameter -JenkinsXMLPath C:\Jenkins\Jenkins.xml
+      $object = Get-JenkinsSvcArgumentObject -JenkinsXMLPath C:\Jenkins\Jenkins.xml
       $object | convertto-Json
       
       .PARAMETER JenkinsXMLPath

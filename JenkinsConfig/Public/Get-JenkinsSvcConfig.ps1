@@ -37,7 +37,7 @@
     process {
         foreach ($JenkinsConfig in $JenkinsXMLPath) {
             $JenkinsXml = Get-JenkinsXml -JenkinsXMLPath $JenkinsConfig -ErrorAction Continue
-            $Arguments = Get-JenkinsJavaArguments -JenkinsXMLPath $JenkinsXMLPath
+            $Arguments = Get-JenkinsSvcArgumentObject -JenkinsXMLPath $JenkinsXMLPath
 
             #Constructing a PSObject out of the Parsed Info (allows easier manipulation).
             #TODO: support a list of Env variable

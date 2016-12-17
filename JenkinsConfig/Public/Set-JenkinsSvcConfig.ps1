@@ -1,4 +1,40 @@
 ﻿function Set-JenkinsSvcConfig {
+    <#
+      .SYNOPSIS
+      Write a configuration object to a Jenkins.xml file.
+
+      .DESCRIPTION
+      This function will create an Xml file if not existing, or will update an existing one with the values set in the
+      Jenkins configuration object.
+
+      .EXAMPLE
+      $sampleConfigObject = [PSCustomObject]@{
+                        PSTypeName = 'Jenkins.configuration'
+                        Service = ([PSCustomObject]@{
+                            id = 'Jenkins'
+                            name = 'JenkinsName'
+                            description = 'Jenkins service description'
+                            env = [PSCustomObject]@{name='envName';value='envValue'}
+                            executable='java'
+                            arguments=$SampleArgumentObject
+                            logmode = 'rotate'
+                            onfailure= [PSCustomObject]@{action='restart'}
+                        })
+      $Params = @{
+        ConfigurationObject = $sampleConfigObject
+        JenkinsXMLPath = 'C:\Program Files (x86)\Jenkins\Jenkins.xml'
+      }
+      
+      Set-JenkinsSvcConfig @Params
+
+      .PARAMETER ConfigurationObject
+      Object representing the values of the Jenkins.xml in a simpler format than xml.
+
+      .PARAMETER JenkinsXMLPath
+      Specify the file location of the Jenkins.xml file to read, by default it will look within the JENKINS_HOME
+      from the default service name.
+      
+      #>
     [CmdletBinding(
         SupportsShouldProcess,
         ConfirmImpact='Medium'

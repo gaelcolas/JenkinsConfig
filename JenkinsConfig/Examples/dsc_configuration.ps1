@@ -1,5 +1,5 @@
-Configuration MyJenkins {
-    Import-DscResource -ModuleName Jenkins
+Configuration Module {
+    Import-DscResource -ModuleName JenkinsConfig
     Import-DscResource -ModuleName PackageManagementProviderResource
     Node localhost {
         PackageManagement vscode {

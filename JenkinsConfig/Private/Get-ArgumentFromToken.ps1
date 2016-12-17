@@ -14,15 +14,16 @@
       This as beend designed to accomodate Java options, as they are not standardized. 
       
       .EXAMPLE
-      Resolve-ArgumentsFromTokens -ArgumentsTokens '-classpath','this.jar','-property:key=value'
+      Get-ArgumentFromToken -ArgumentsTokens '-classpath','this.jar','-property:key=value'
       #output: returns 2 objects similar to those below
       #@{property='classpath';classpath='this.jar'}
       #@{dashes='-';key='key';value='value';separator=':'}
       
       .EXAMPLE
-      Resolve-ArgumentsFromTokens -ArgumentsTokens '--key:value','--httport:8080' -ArgumentsDefinitionFile C:\JenkinsArguments.jsonb
+      Get-ArgumentFromToken -ArgumentToken '--key:value','--httport:8080'`
+                     -ArgumentsDefinitionFile C:\JenkinsArguments.jsonb
       
-      .PARAMETER ArgumentsTokens
+      .PARAMETER ArgumentToken
       List of tokenized command arguments (array of string) that can be parsed by a 
       given Argument Definition file.
       
@@ -52,7 +53,7 @@
             )]
         [validateNotNull()]
         [String[]]
-        $ArgumentsTokens,
+        $ArgumentToken,
 
         [Parameter(
             ,ValueFromPipelineByPropertyName
@@ -73,7 +74,7 @@
     Process {
         $GrabbingTokenForPreviousOption = $false
         $OptionStack = $null
-        foreach ($Token in $ArgumentsTokens) {
+        foreach ($Token in $ArgumentToken) {
            #for Each token
             #if we're not grabbing current Token as property for previous Java Option
             #Select each JavaOption parser where the token match the selector

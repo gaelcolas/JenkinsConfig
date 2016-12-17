@@ -43,4 +43,4 @@ platforms:
     shell: powershell
 
 suites:
-  - name: MyJenkins
+  - name: Module

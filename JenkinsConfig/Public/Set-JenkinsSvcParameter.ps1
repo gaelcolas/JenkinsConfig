@@ -1,10 +1,13 @@
 ﻿function Set-JenkinsSvcParameter {
     <#
       .SYNOPSIS
-      Describe the function here
+      Updates the Jenkins.xml Arguments node with given tokens.
 
       .DESCRIPTION
-      Describe the function in more detail
+      Merge the Java options or Jar Arguments of the Jenkins.xml file based on a list of tokens, following the pattern:
+      Java [Options] -jar Jenkins.jar [arguments]
+      
+      The Resolution behavior allows you to finely control how the merge is processed. 
 
       .EXAMPLE
       $Params = @{
@@ -12,16 +15,25 @@
         ResolutionBehavior = 'UpdateAndAdd'
         JenkinsXMLPath = 'C:\Program Files (x86)\Jenkins\Jenkins.xml'
       }
-      Set-JenkinsJavaArgument @Params
+      Set-JenkinsSvcParameter @Params
 
-      .EXAMPLE
-      Give another example of how to use it
+      .PARAMETER JenkinsArgumentTokens
+      A list of Arguments to be parsed and merged with the existing values.
 
-      .PARAMETER Param1
-      The param1
+      .PARAMETER JavaOptionOrJarArgument
+      A selector that allows you to set either part of the Java arguments such as:
+      Java [options] -jar jenkins.jar [arguments]
 
-      .PARAMETER param2
-      The second param
+      .PARAMETER ResolutionBehavior
+      Merge behavior between the existing list of arguments and the provided update.
+
+      .PARAMETER JenkinsXMLPath
+      Jenkins.xml file defining the Service configuration.
+
+      .PARAMETER ArgumentsDefinitionFile
+      Definition file in Json that describes how the Tokens needs to be parsed, and in this case, how the parsed tokens
+      can be converted back to tokens before joining them in a string, in the relevant node of the XML configuration.
+
       #>
     [cmdletBinding(
         SupportsShouldProcess=$true,
