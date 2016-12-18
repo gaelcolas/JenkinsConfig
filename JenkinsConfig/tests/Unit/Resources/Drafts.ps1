@@ -77,3 +77,17 @@ $JenkinsJobBuilderRunner = @{
 }
 
 
+$JavaPath = 'C:\Program Files (x86)\Jenkins\jre\bin\java.exe' 
+$JenkinsCliJar = 'C:\Jenkins-cli.jar'
+$JenkinsUri = 'http://localhost:8080/'
+$JenkinsJarArguments = @('-jar',$JenkinsCliJar, '-s',$JenkinsUri)
+$jenkinsCmd = 'groovy','='
+
+$jenkinsCredentials = @('--username','admin','--password','9ffa1135f9cc4db28b84fa0e1112d83e')
+$JenkinsCmdArguments = 'jenkins.model.Jenkins.instance.securityRealm.createAccount("test", "DevOpsLibrary")'
+$JenkinsJarArguments += $jenkinsCmd
+$JenkinsJarArguments += $JenkinsCredentials
+#$JenkinsJarArguments += $JenkinsCmdArguments
+
+"$JenkinsCmdArguments | $JavaPath $($JenkinsJarArguments -join ' ')"
+$JenkinsCmdArguments | & $JavaPath $JenkinsJarArguments

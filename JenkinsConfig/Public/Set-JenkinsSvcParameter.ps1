@@ -98,17 +98,22 @@
             }
         }
 
-        if ($PSBoundParameters.ContainsKey('ArgumentsDefinitionFile')) {
+        if ($PSBoundParameters.ContainsKey('ArgumentsDefinitionFile') -or !$ArgumentsDefinitionFile) {
             $ArgumentsDefinitionFile = $DefaultArgumentDefinitionFile
         }
-
+        Write-Verbose -Message ('Using Argument Definition File {0}' -f $ArgumentsDefinitionFile)
+        Write-Verbose -Message 'Getting Jenkins Svc Config'
         $JenkinsConfig = Get-jenkinsSvcConfig -JenkinsXMLPath $JenkinsXMLPath -ErrorAction Stop
-        $CurrentArguments = Get-ArgumentsFromToken -ArgumentsTokens $JenkinsConfig.Service.arguments.($ArgumentsProperty) -ArgumentsDefinitionFile $ArgumentsDefinitionFile
-        $ArgumentsToUpdate = Get-ArgumentsFromToken -ArgumentsTokens $JenkinsArgumentTokens -ArgumentsDefinitionFile $ArgumentsDefinitionFile
+        Write-Verbose -Message ('Transforming Jenkins Config {0} Tokens into Arguments using: {1}' -f $ArgumentsProperty,$ArgumentsDefinitionFile)
+        $CurrentArguments = Get-ArgumentFromToken -ArgumentToken $JenkinsConfig.Service.arguments.($ArgumentsProperty) -ArgumentsDefinitionFile $ArgumentsDefinitionFile -Verbose
+        Write-Verbose -Message 'Transforming provided Tokens into arguments'
+        $ArgumentsToUpdate = Get-ArgumentFromToken -ArgumentToken $JenkinsArgumentTokens -ArgumentsDefinitionFile $ArgumentsDefinitionFile
+        Write-Verbose -Message ('Merging Arguments based on the behavior sepecified: {0}' -f $ResolutionBehavior)
         $NewJenkinsArguments = Merge-Argument -UpdateSource $ArgumentsToUpdate -ExistingArguments $CurrentArguments -ResolutionBehavior $ResolutionBehavior -ArgumentsDefinitionFile $ArgumentsDefinitionFile
         $JenkinsConfig.service.arguments.($ArgumentsProperty) = Get-TokensFromArgument -ArgumentList $NewJenkinsArguments -ArgumentsDefinitionFile $ArgumentsDefinitionFile
 
         if ($PSCmdlet.ShouldProcess($JenkinsXMLPath.FullName)) {
+            Write-Verbose -Message 'Writing the updated values to the file.'
             Set-JenkinsSvcConfig -ConfigurationObject $JenkinsConfig -JenkinsXMLPath $JenkinsXMLPath
         }
     }

@@ -21,7 +21,7 @@
       
       .EXAMPLE
       Get-ArgumentFromToken -ArgumentToken '--key:value','--httport:8080'`
-                     -ArgumentsDefinitionFile C:\JenkinsArguments.jsonb
+                     -ArgumentsDefinitionFile C:\JenkinsArguments.json
       
       .PARAMETER ArgumentToken
       List of tokenized command arguments (array of string) that can be parsed by a 

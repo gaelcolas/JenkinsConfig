@@ -45,8 +45,8 @@ Describe 'Get-JenkinsSvcArgumentObject' {
         { Get-JenkinsSvcArgumentObject -JenkinsXMLPath C:\this\is\mocked.ps1 } | Should Not Throw
     }
 
-    It 'does not return anything'     {
-      $result = Get-JenkinsSvcArgumentObject
+    It 'Returns the correct SvcArgumentObject'     {
+      $result = Get-JenkinsSvcArgumentObject -JenkinsXMLPath "$here\resources\Jenkins.xml"
       Compare-Object -ReferenceObject $sampleOutput -DifferenceObject $result -Property Executable,Options,isJar,ClassOrJar,Arguments| Should BeNullOrEmpty
     }
   }

@@ -15,29 +15,48 @@
       
       .PARAMETER JenkinsXMLPath
       File path to the Jenkins XML configuration file. Default to C:\Program Files (x86)\Jenkins\Jenkins.xml
+
+      .PARAMETER ServiceName
+      Service to be used to resolve the JENKINS_HOME to find the Jenkins.xml file.
       #>
-    [cmdletBinding()]
+    [cmdletBinding(DefaultParameterSetName='ByServiceName')]
     [OutputType('Jenkins.config.SvcParameter[]')]
     Param(
         [Parameter(
-            ValueFromPipeline,
             ValueFromPipelineByPropertyName,
-            Position=0
+            Position=0,
+            ParameterSetName = 'ByJenkinsXmlFilePath'
             )]
         [ValidateNotNullOrEmpty()]
         [IO.FileInfo]
-        $JenkinsXMLPath = [IO.FileInfo]::new('C:/Program Files (x86)/Jenkins/Jenkins.xml')
+        $JenkinsXMLPath = [IO.FileInfo]::new('C:/Program Files (x86)/Jenkins/Jenkins.xml'),
+
+        [Parameter(
+            ValueFromPipelineByPropertyName,
+            Position=0,
+            ParameterSetName = 'ByServiceName'
+            )]
+        [AllowNull()]
+        [IO.FileInfo]
+        $ServiceName = 'Jenkins'
     )
     
     Process {
-        foreach ($JenkinsConfig in $JenkinsXMLPath) {
-            $JenkinsXml = Get-JenkinsXml -JenkinsXMLPath $JenkinsConfig -ErrorAction Continue
+            if ($PSCmdlet.ParameterSetName -eq 'ByServiceName') {
+                $JenkinsHome = Get-JenkinsHomeFromSvcName -ServiceName $ServiceName
+                Write-Verbose -Message ('Jenkins Home Resolved to {0}' -f $JenkinsHome)
+
+                if (!($JenkinsXMLPath = [io.fileInfo](Join-Path -Path $JenkinsHome -ChildPath Jenkins.xml)) -or
+                    !$JenkinsXMLPath.Exists) {
+                    Throw ('Could not resolve path {0}\Jenkins.xml' -f $JenkinsHome)
+                }
+            }
+            $JenkinsXml = Get-JenkinsXml -JenkinsXMLPath $JenkinsXMLPath -ErrorAction Continue
 
             $CommandLine = $JenkinsXml.Service.arguments
 
             Get-JavaCommandObjectFromTokenizedCommand -TokenizedCommand (
                     Get-TokenizedCommand -InputObject $CommandLine -RemoveEmptyToken
                   )
-        }
     }
 }

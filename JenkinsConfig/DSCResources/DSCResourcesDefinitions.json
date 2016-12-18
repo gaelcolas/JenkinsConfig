@@ -46,7 +46,7 @@
                 "Name": "ResolutionMode",
                 "Type": "String",
                 "Attribute": "Write",
-                "ValidateSet": ["UpdateOnly","UpdateAndAdd","ExactAndFinal","RemoveIfPresent","RemoveIfExact","ErrorArgumentExists","ErrorArgumentIfExact","ReturnIfPresent","ReturnIfExact"],
+                "ValidateSet": ["UpdateOnly","UpdateAndAdd","ExactAndFinal","RemoveIfPresent","RemoveIfExact","ErrorArgumentExists","ErrorArgumentIfExact"],
                 "Description": "Says how the list of options should be merged with the existing one."
             },
             {
@@ -64,7 +64,7 @@
             {
                 "Name": "ServiceName",
                 "Attribute": "key",
-                "Description": "Identifying the Service Name to find the JENKINS_HOME based on teh Service executable.",
+                "Description": "Identifying the Service Name to find the JENKINS_HOME based on the Service executable.",
                 "Type": "String"
             }
         ]

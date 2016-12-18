@@ -27,7 +27,6 @@ provisioner:
     modules_path: modules
     retry_on_exit_code:
     - 35
-    - 1
     configuration_data_variable: configData
     modules_from_gallery:
      - xPSDesiredStateConfiguration
@@ -43,4 +42,8 @@ platforms:
     shell: powershell
 
 suites:
-  - name: Module
+  - name: JenkinsSvcJavaOption
+    driver:
+      ip_address: 10.111.111.118
+    provisioner:
+      configuration_script: JenkinsSvcJavaOption.ps1
