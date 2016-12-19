@@ -45,7 +45,7 @@
         foreach ($CmdObject in $JavaCommandObject) {
             $JenkinsArgs = foreach ($section in 'executable','Options','ClassOrJar','Arguments') {
                 if ($section -eq 'ClassOrJar' -and $CmdObject.isJar) {
-                    Write-Output ('-Jar {0}' -f $CmdObject.$section)
+                    Write-Output ('-jar {0}' -f $CmdObject.$section)
                 }
                 else {
                     Write-Output ($CmdObject.($Section) -join ' ')

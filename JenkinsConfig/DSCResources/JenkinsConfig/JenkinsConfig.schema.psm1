@@ -84,7 +84,8 @@ Configuration JenkinsConfig
 
     Import-DscResource -ModuleName xPSDesiredStateConfiguration
     Import-DscResource -ModuleName PackageManagementProviderResource
-
+    Import-DscResource -ModuleName JenkinsConfig
+    
         PackageManagement Jenkins {
             Ensure = 'Present'
             Name = 'Jenkins'
@@ -98,45 +99,20 @@ Configuration JenkinsConfig
             ProviderName = 'Chocolatey'
         }
 
-        # Set the Jenkins Port
-        Script SetJenkinsPort
-        {
-            SetScript = {
-                Write-Verbose -Verbose "Setting Jenkins Port to $Using:Port"
-                $Config = Get-Content `
-                    -Path "$using:InstallationPath\Jenkins.xml"
-                $NewConfig = $Config `
-                    -replace '--httpPort=[0-9]*\s',"--httpPort=$Using:Port "
-                Set-Content `
-                    -Path "$using:InstallationPath\Jenkins.xml" `
-                    -Value $NewConfig `
-                    -Force
-                Write-Verbose -Verbose "Restarting Jenkins"
-                Restart-Service `
-                    -Name Jenkins
-            }
-            GetScript = {
-                $Config = Get-Content `
-                    -Path "$using:InstallationPath\Jenkins.xml"
-                $Matches = @([regex]::matches($Config, "--httpPort=([0-9]*)\s", 'IgnoreCase'))
-                $CurrentPort = $Matches.Groups[1].Value
-                Return @{
-                    'JenkinsPort' = $CurrentPort
-                }
-            }
-            TestScript = {
-                $Config = Get-Content `
-                    -Path "$using:InstallationPath\Jenkins.xml"
-                $Matches = @([regex]::matches($Config, "--httpPort=([0-9]*)\s", 'IgnoreCase'))
-                $CurrentPort = $Matches.Groups[1].Value
-        
-                If ($Using:Port -ne $CurrentPort) {
-                    # Jenkins port must be changed
-                    Return $False
-                }
-                # Jenkins is already on correct port
-                Return $True
-            }
+        JenkinsSvcJavaOption runSetupWizardFalse {
+            ResolutionMode = 'UpdateAndAdd'
+            Tokens = '-Djenkins.install.runSetupWizard=false'
+            RunName = 'Initial Setup'
+            ServiceName = 'Jenkins'
+            RestartService = $True
+        }
+
+        JenkinsSvcJarArgument HttpPort {
+            ResolutionMode = 'UpdateAndAdd'
+            Tokens = '--httpPort=8081'
+            RunName = 'Initial port setup'
+            ServiceName = 'Jenkins'
+            RestartService = $true
         }
 
         foreach ($pluginInfo in $plugins) {

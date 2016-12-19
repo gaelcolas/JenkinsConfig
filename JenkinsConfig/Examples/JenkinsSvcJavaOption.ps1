@@ -19,6 +19,15 @@ Configuration  JenkinsSvcJavaOption {
             Tokens = '-Djenkins.install.runSetupWizard=false'
             RunName = 'Initial Setup'
             ServiceName = 'Jenkins'
+            RestartService = $True
+        }
+
+        JenkinsSvcJarArgument HttpPort {
+            ResolutionMode = 'UpdateAndAdd'
+            Tokens = '--httpPort=8080'
+            RunName = 'Initial port setup'
+            ServiceName = 'Jenkins'
+            RestartService = $true
         }
     }
 }

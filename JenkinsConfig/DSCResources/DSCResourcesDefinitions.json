@@ -66,6 +66,47 @@
                 "Attribute": "key",
                 "Description": "Identifying the Service Name to find the JENKINS_HOME based on the Service executable.",
                 "Type": "String"
+            },
+            {
+                "Name": "RestartService",
+                "Attribute": "Write",
+                "Description": "Restart the service after making a change to its configuration to apply it.",
+                "Type": "boolean"
+            }
+        ]
+    },
+    {
+        "JenkinsSvcJarArgument": [
+            {
+                "Name": "ResolutionMode",
+                "Type": "String",
+                "Attribute": "Write",
+                "ValidateSet": ["UpdateOnly","UpdateAndAdd","ExactAndFinal","RemoveIfPresent","RemoveIfExact","ErrorArgumentExists","ErrorArgumentIfExact"],
+                "Description": "Says how the list of arguments should be merged with the existing one."
+            },
+            {
+                "Name": "Tokens",
+                "Type": "string[]",
+                "Attribute": "Required",
+                "Description": "List of Tokens to be Merged with the existing one, based on the ResolutionBehavior"
+            },
+            {
+                "Name": "RunName",
+                "Attribute": "Key",
+                "Description": "Unique identifier for this settings",
+                "Type": "String"
+            },
+            {
+                "Name": "ServiceName",
+                "Attribute": "key",
+                "Description": "Identifying the Service Name to find the JENKINS_HOME based on the Service executable.",
+                "Type": "String"
+            },
+            {
+                "Name": "RestartService",
+                "Attribute": "Write",
+                "Description": "Restart the service after making a change to its configuration to apply it.",
+                "Type": "boolean"
             }
         ]
     }
