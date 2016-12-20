@@ -54,5 +54,4 @@
             Write-Output -InputObject ($JenkinsArgs -join ' ')
         }
     }
-
 }

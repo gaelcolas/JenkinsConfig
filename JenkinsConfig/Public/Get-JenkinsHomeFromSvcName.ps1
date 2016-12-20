@@ -39,7 +39,8 @@
         if(!($Service = Get-CimInstance -ClassName win32_service | Where-Object { $_.name -match $ServiceId })) {
             Throw "The Service with Name $ServiceID was not found. Did you provide the DisplayName instead?"
         }
-
-        Write-Output -InputObject ([io.DirectoryInfo](split-path -Parent -Path ($Service.PathName -replace '"') ))
+        else {
+            Write-Output -InputObject ([io.DirectoryInfo](split-path -Parent -Path ($Service.PathName -replace '"') ))
+        }
     }
 }
