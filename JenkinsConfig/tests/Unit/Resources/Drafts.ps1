@@ -27,7 +27,12 @@ $jenkinsSvcInstall = @{
     RunServiceAs     = $runAsCred
 }
 
+$JenkinsInternalUser = @{
+    Ensure = 'Present'
+    Login = 'user1'
+    FullName = 
 
+}
 $JenkinsSvcJavaOption = @{
     Ensure = 'Present'
     Identifier = 'Basic Options'

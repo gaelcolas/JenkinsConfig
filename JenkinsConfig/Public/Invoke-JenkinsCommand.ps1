@@ -81,8 +81,7 @@
         $NoSecurity,
 
         [Parameter(
-            Mandatory
-            ,ValueFromPipelineByPropertyName
+            ValueFromPipelineByPropertyName
             )]
         [uri]
         $JenkinsUri,
@@ -144,6 +143,23 @@
                     Throw ('Error downloading the Jenkins-cli.jar file from {0}/war/WEB-INF/jenkins-cli.jar' -f $JenkinsUri)
                 }
             }
+        }
+
+       $JenkinsSvcParams = @{
+            JavaOptionOrJarArgument = 'JarArgument'
+            ServiceName = $JenkinsServiceId
+            ErrorAction = 'SilentlyContinue'
+        }
+
+        if (!$JenkinsUri -and
+            ($JenkinsHome = Get-JenkinsHomeFromSvcName -ServiceId $JenkinsServiceId -ErrorAction SilentlyContinue) -and
+            ($HttpPort = Get-JenkinsSvcParameter @JenkinsSvcParams | Where-Object { $_.key -eq 'httpPort' } )
+           )
+        {
+            $JenkinsUri = [uri]( 'http://localhost:{0}/' -f  $HttpPort.value)
+        }
+        elseif (!$JenkinsUri) {
+            Throw 'Unable to resolve to a local instance. Please provide the JenkinsUri.'
         }
 
         $jenkinsCommand = @('-jar',$JenkinsCliJar.FullName,'-s',$JenkinsUri.AbsoluteUri)
