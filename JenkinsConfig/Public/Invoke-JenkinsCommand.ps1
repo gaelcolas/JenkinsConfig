@@ -128,12 +128,14 @@
         if (!$PSBoundParameters.ContainsKey('JenkinsCliJar') -or !$JenkinsCliJar.Exists) {
             Write-Debug -Message 'No Jenkins-cli.jar file provided or does ont exist, Trying to resolve or download'
             #Find JenkinsHome if Jenkins service is installed, then the the jenkins-cli.jar is war/WEB-INF/
+            
             if ($JenkinsHome = Get-JenkinsHomeFromSvcName -ServiceId $JenkinsServiceId -ErrorAction SilentlyContinue) {
                 Write-Debug -Message ('Jenkins Home found on this node, from service name {0}' -f $JenkinsServiceId)
                 $JenkinsCliJar = Join-path -Path $JenkinsHome -ChildPath 'war/WEB-INF/jenkins-cli.jar' -Resolve -ErrorAction Stop
                 Write-Verbose -Message ('File found in {0}' -f $JenkinsCliJar.FullName)
-            }
+            }            
             elseif (!($JenkinsCliJar = (Join-path -Path $Env:AppData -ChildPath '/JenkinsConfig/Jenkins-cli.jar' -Resolve -ErrorAction SilentlyContinue))) {
+                Write-Debug -Message 'Jenkins-cli.jar was not previously downloaded. Attempting to download from JenkinsURI'
                 #Not previously downloaded, Download Jenkins CLI in $Env:AppData\JenkinsConfig
                 Write-Verbose -Message ('Attempting to download the file from {0}' -f $JenkinsUri)
                 $DownloadTo = New-Item -ItemType Directory -Path (Join-path -Path $Env:AppData -ChildPath '/JenkinsConfig/') -Force
@@ -143,6 +145,7 @@
                     Throw ('Error downloading the Jenkins-cli.jar file from {0}/war/WEB-INF/jenkins-cli.jar' -f $JenkinsUri)
                 }
             }
+
         }
 
        $JenkinsSvcParams = @{
@@ -202,7 +205,7 @@
         if ($pscmdlet.ShouldProcess(('java -jar jenkins-cli.jar {0} {1}' -f ($Command -join ' '), ($CommandArgument -join ' ') ))) {
             if ($InputObject) {
                 Write-Verbose -Message ('Executing command {0}| & {1} {2}' -f $Input,$JavaExe,($JenkinsCommand -join ' '))
-                $result = [string]($Input | & $JavaExe $jenkinsCommand *>&1 )
+                $result = [string]($InputObject | & $JavaExe $jenkinsCommand *>&1 )
             }
             else {
                 Write-Verbose -Message ('Executing command without STDIN.')

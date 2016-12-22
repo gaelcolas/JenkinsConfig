@@ -37,7 +37,12 @@
     Process {
 
         if(!($Service = Get-CimInstance -ClassName win32_service | Where-Object { $_.name -match $ServiceId })) {
-            Throw "The Service with Name $ServiceID was not found. Did you provide the DisplayName instead?"
+            if ($PSBoundParameters.ContainsKey('ErrorAction') -and $PSBoundParameters['ErrorAction'] -eq 'SilentlyContinue') {
+                Write-Verbose -Message ('The Service with Name {0} was not found. Did you provide the DisplayName instead?' -f $ServiceID)
+            }
+            else {
+                Throw "The Service with Name $ServiceID was not found. Did you provide the DisplayName instead?"
+            }
         }
         else {
             Write-Output -InputObject ([io.DirectoryInfo](split-path -Parent -Path ($Service.PathName -replace '"') ))
