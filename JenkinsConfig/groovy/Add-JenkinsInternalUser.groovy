@@ -17,15 +17,7 @@ $UserName = $UserCredential.UserName
 $UserPassword = $UserCredential.GetNetworkCredential().Password
 
 */
-import hudson.model.User
 import groovy.json.*
 
-//input needs escaping (' and \ at least)
-def user = User.get('<%=UserName%>')
-def PasswordToTest = '<%=UserPassword%>'
-def passwordProperty = user.getProperty(hudson.security.HudsonPrivateSecurityRealm.Details)
-
-if (passwordProperty != null) {
-  def hashed_pw = passwordProperty.getPassword().substring(9) //#jbcrypt: is hardcoded header when using jbcrypt and not classic.
-  println JsonOutput.toJson(hudson.security.HudsonPrivateSecurityRealm.JBCRYPT_ENCODER.isPasswordValid(hashed_pw,PasswordToTest,null))
-}
+hpsr = new hudson.security.HudsonPrivateSecurityRealm(false);
+hpsr.createAccount("<%=UserName%>", "<%=UserName%>")

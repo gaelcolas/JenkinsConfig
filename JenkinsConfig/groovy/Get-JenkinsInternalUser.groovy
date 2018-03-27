@@ -8,21 +8,17 @@ Param(
     [Parameter(
         Mandatory
     )]
-    [PSCredential]
-    [System.Management.Automation.Credential()]
-    $UserCredential
+    [String]
+    [ValidateNotNull()]
+    $Userid
     )
-
-$UserName = $UserCredential.UserName
-$UserPassword = $UserCredential.GetNetworkCredential().Password
 
 */
 import hudson.model.User
 import groovy.json.*
 
 //input needs escaping (' and \ at least)
-def user = User.get('<%=UserName%>')
-def PasswordToTest = '<%=UserPassword%>'
+def user = User.get('<%=Userid%>')
 def passwordProperty = user.getProperty(hudson.security.HudsonPrivateSecurityRealm.Details)
 
 if (passwordProperty != null) {
